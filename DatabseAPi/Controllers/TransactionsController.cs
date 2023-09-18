@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DatabseAPi;
 using Npgsql;
+using Transaction = DatabseAPi.Transaction;
 
 namespace DatabaseAPi.Controllers
 {
@@ -36,6 +37,40 @@ namespace DatabaseAPi.Controllers
             return Ok();
         }
 
+        [HttpGet("all")]
+        public IActionResult ReadAllTransactions()
+        {
+            List<DatabseAPi.Transaction> transactions = new List<Transaction>();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                string query = "SELECT * FROM transaction";
+                NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+                connection.Open();
+                NpgsqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Transaction transaction = new Transaction
+                    {
+                        Id = (int)reader["id"],
+                        CustomerId = (int)reader["customer_id"],
+                        ProductId = (int)reader["product_id"],
+                        Quantity = (int)reader["quantity"],
+                        TransactionDate = (DateTime)reader["transaction_date"]
+
+
+                        // Dodaj pozostałe pola tabeli "transaction" zgodnie z ich typem
+                    };
+                    transactions.Add(transaction);
+                }
+            }
+
+            return Ok(transactions);
+        }
+
+
         // Metoda do odczytywania rekordu z tabeli "transaction" na podstawie ID
         [HttpGet("{id}")]
         public IActionResult ReadTransaction(int id)
@@ -67,6 +102,7 @@ namespace DatabaseAPi.Controllers
 
             return Ok(transaction);
         }
+
 
         // Metoda do aktualizacji rekordu w tabeli "transaction"
         [HttpPut("{id}")]

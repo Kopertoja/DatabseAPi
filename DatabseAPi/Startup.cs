@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Transactions;
 
 namespace DatabaseAPi
 {
@@ -19,6 +20,16 @@ namespace DatabaseAPi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CORSPolicy", builder =>
+                {
+                    builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .WithOrigins("http://localhost:3000");
+                });
+            });
             services.AddControllers();
 
             // Dodaj konfigurację połączenia do bazy danych
@@ -44,7 +55,7 @@ namespace DatabaseAPi
             }
 
             app.UseRouting();
-
+            app.UseCors("CORSPolicy");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

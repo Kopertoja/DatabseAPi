@@ -17,6 +17,8 @@ namespace DatabseAPi
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+       
     }
 }
 

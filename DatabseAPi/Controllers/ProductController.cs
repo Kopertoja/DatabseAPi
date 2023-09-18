@@ -68,6 +68,34 @@ namespace DatabaseAPi.Controllers
             return Ok(product);
         }
 
+        [HttpGet("all")]
+        public IActionResult ReadAllProducts()
+        {
+            List<Product> products = new List<Product>();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                string query = "SELECT * FROM product";
+                NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+                connection.Open();
+                NpgsqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Product product = new Product
+                    {
+                        Id = (int)reader["id"],
+                        Name = (string)reader["name"],
+                        Price = (decimal)reader["price"]
+                    };
+                    products.Add(product);
+                }
+            }
+
+            return Ok(products);
+        }
+
         // Metoda do aktualizacji rekordu w tabeli "product"
         [HttpPut("{id}")]
         public IActionResult UpdateProduct(int id, Product product)

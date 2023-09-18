@@ -39,6 +39,38 @@ namespace DatabseAPi.Controllers
             return Ok();
         }
 
+        [HttpGet("all")]
+        public IActionResult ReadAllCustomers()
+        {
+            List<DatabseAPi.Customer> customers = new List<Customer>();
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                string query = "SELECT * FROM customer";
+                NpgsqlCommand command = new NpgsqlCommand(query, connection);
+
+                connection.Open();
+                NpgsqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    Customer customer = new Customer
+                    {
+                        Id = (int)reader["id"],
+                        Name = (string)reader["name"],
+                        Email = (string)reader["email"],
+                        Phone = (string)reader["phone"]
+
+
+                    // Dodaj pozostałe pola tabeli "transaction" zgodnie z ich typem
+                };
+                    customers.Add(customer);
+                }
+            }
+
+            return Ok(customers);
+        }
+
         // Metoda do odczytywania rekordu z tabeli "customer" na podstawie ID
         [HttpGet("{id}")]
         public IActionResult ReadCustomer(int id)
