@@ -61,7 +61,7 @@ namespace DatabaseAPi.Controllers
                         TransactionDate = (DateTime)reader["transaction_date"]
 
 
-                        // Dodaj pozostałe pola tabeli "transaction" zgodnie z ich typem
+                        
                     };
                     transactions.Add(transaction);
                 }
