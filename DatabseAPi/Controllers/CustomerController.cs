@@ -62,7 +62,7 @@ namespace DatabseAPi.Controllers
                         Phone = (string)reader["phone"]
 
 
-                    // Dodaj pozostałe pola tabeli "transaction" zgodnie z ich typem
+                    
                 };
                     customers.Add(customer);
                 }
